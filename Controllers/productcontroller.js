@@ -1,4 +1,3 @@
-const multer = require("multer");
 const sharp = require("sharp");
 const { cloudinary } = require("../utils/cloudinary");
 const Product = require("../Models/productModel");
@@ -29,6 +28,15 @@ exports.addProduct = async (req, res, next) => {
 
         res.status(200).json(doc);
       });
+  } catch (e) {
+    res.json(e);
+  }
+};
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const doc = await Product.find();
+    res.status(200).json(doc);
   } catch (e) {
     res.json(e);
   }
