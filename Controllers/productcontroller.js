@@ -7,6 +7,7 @@ exports.addProduct = async (req, res, next) => {
 
   req.body.image = `product--${Date.now()}-image.jpeg`;
   try {
+    // console.log(req.files);
     await sharp(req.files.image.data)
       .resize(500, 500)
       .toFormat("jpeg")

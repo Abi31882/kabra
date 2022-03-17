@@ -23,7 +23,7 @@ exports.singup = async function (req, res) {
   try {
     const user = await User.findOne({ userName: req.body.userName });
     if (user) {
-      return res.json("username already exists");
+      return res.status(400).json({ message: "username already exists" });
     }
     const newUser = await User.create({
       userName: req.body.userName,
@@ -32,7 +32,7 @@ exports.singup = async function (req, res) {
 
     createSendToken(newUser, 200, req, res);
   } catch (e) {
-    res.json(e);
+    res.status(500).json(e);
   }
 };
 
@@ -40,14 +40,14 @@ exports.login = async function (req, res, next) {
   const { userName, password } = req.body;
 
   if (!userName || !password) {
-    return res.json({
+    return res.status(500).json({
       message: "You must provide username and password",
     });
   }
 
   const user = await User.findOne({ userName }).select("+password");
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return res.json({
+    return res.status(400).json({
       message: "Incorrect username or password",
     });
   }
@@ -78,12 +78,9 @@ exports.protect = async (req, res, next) => {
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    return next(
-      new AppError(
-        "the user belonging to this token does no longer exists",
-        401
-      )
-    );
+    return res
+      .status(400)
+      .json("the user belonging to this token does no longer exists");
   }
 
   // grant access to protected route

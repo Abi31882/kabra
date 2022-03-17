@@ -11,13 +11,12 @@ exports.createCart = async (req, res, next) => {
 
     res.status(201).json(doc);
   } catch (e) {
-    res.json(e);
+    res.status(400).json(e);
   }
 };
 
 exports.addToCart = async (req, res, next) => {
   const { productId } = req.params;
-  // const { cartId } = req.params; //TODO: the logged in user id
 
   const doc = await Cart.findById(req.params.cartId);
 
@@ -60,7 +59,7 @@ exports.getCart = async (req, res, next) => {
   const doc = await Cart.findOne({ user: req.user.id }).exec();
 
   if (!doc) {
-    return res.json("No Cart found with that ID");
+    return res.status(404).json("No Cart found with that ID");
   }
 
   res.status(200).json({
