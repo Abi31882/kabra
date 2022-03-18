@@ -4,10 +4,11 @@ const cartSchema = new mongoose.Schema(
   {
     product: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: "Product",
-        //   required: [true, 'Cart must belong to a product'],
+        id: String,
+        name: String,
+        price: Number,
         quantity: Number,
+        image: String,
       },
     ],
     user: {
@@ -23,13 +24,13 @@ const cartSchema = new mongoose.Schema(
   }
 );
 
-cartSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: "product",
-  });
+// cartSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: "product",
+//   });
 
-  next();
-});
+//   next();
+// });
 
 const Cart = mongoose.model("Cart", cartSchema);
 

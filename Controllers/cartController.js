@@ -16,20 +16,33 @@ exports.createCart = async (req, res, next) => {
 };
 
 exports.addToCart = async (req, res, next) => {
-  const { productId } = req.params;
+  const { productId, cartId } = req.params;
+  const { name, image, price, quantity } = req.body;
 
-  const doc = await Cart.findById(req.params.cartId);
+  const doc = await Cart.findById(cartId);
 
   if (!doc) {
-    return res.json("no cart created");
+    return res.status(400).json("no cart created");
   }
   const product = doc.product.find((p) => p.id === productId);
 
   if (product) {
-    return res.json("already in the doc", 400);
+    return res
+      .status(400)
+      .json(
+        "this product is already in your cart, Increase the quantity from the carts page",
+        400
+      );
   }
 
-  doc.product.push(productId);
+  doc.product.push({
+    name,
+    price,
+    quantity,
+    image,
+  });
+
+  // doc.product.push(productId);
   await doc.save();
   res.status(200).json({
     status: "success",
@@ -56,7 +69,13 @@ exports.deleteFromCart = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-  const doc = await Cart.findOne({ user: req.user.id }).exec();
+  const doc = await Cart.find({ user: req.user.id });
+  console.log(req.user.id);
+  // const g = await Cart.find();
+  // console.log(g);
+  // const filter = g.find((e) => e.user === req.user.id);
+  console.log(doc);
+  // console.log(filter);
 
   if (!doc) {
     return res.status(404).json("No Cart found with that ID");
@@ -70,29 +89,26 @@ exports.getCart = async (req, res, next) => {
 
 exports.updateQuantity = async (req, res, next) => {
   const doc = await Cart.findById(req.params.cartId);
+  // const id = doc.id;
+  // console.log(id);
+  // const product = await doc.product.filter(
+  //   (el) => el.quantity === req.body.quantity
+  // );
+  // const cartProducts = await doc.product.find(
+  //   (e) => (e.id = req.params.productId)
+  // );
+  // cartProducts.quantity = req.body.quantity;
 
-  if (!doc) {
-    return res.json("we could not fild your cart");
-  }
+  // product.quantity = req.body.quantity;
+  const cartProducts = await doc.product.map((e) =>
+    e.id === req.params.productId ? { ...e, quantity: req.body.quantity } : e
+  );
+  console.log(cartProducts);
 
-  const product = doc.product.find((el) => el.id === req.params.productId);
+  await doc.save();
 
-  if (!product) {
-    return res.json(
-      "Sorry, there is no such product, please specify correctly"
-    );
-  }
-
-  if (product) {
-    product.quantity = req.body.quantity;
-
-    await doc.save({ validateBeforeSave: false });
-
-    res.status(200).json({
-      status: "success",
-      cart: doc,
-    });
-  } else {
-    next();
-  }
+  res.status(200).json({
+    status: "success",
+    cart: cartProducts,
+  });
 };
