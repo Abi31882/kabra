@@ -17,7 +17,7 @@ exports.createCart = async (req, res, next) => {
 
 exports.addToCart = async (req, res, next) => {
   const { productId, cartId } = req.params;
-  const { name, image, price, quantity } = req.body;
+  const { name, image, price, quantity, productID } = req.body;
 
   const doc = await Cart.findById(cartId);
 
@@ -40,6 +40,7 @@ exports.addToCart = async (req, res, next) => {
     price,
     quantity,
     image,
+    productID,
   });
 
   // doc.product.push(productId);
@@ -69,46 +70,24 @@ exports.deleteFromCart = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-  const doc = await Cart.find({ user: req.user.id });
-  console.log(req.user.id);
-  // const g = await Cart.find();
-  // console.log(g);
-  // const filter = g.find((e) => e.user === req.user.id);
-  console.log(doc);
-  // console.log(filter);
-
-  if (!doc) {
-    return res.status(404).json("No Cart found with that ID");
+  const id = req.user.id;
+  const doc = await Cart.find();
+  // console.log(doc);
+  const cart = doc.find((el) => el.user == id);
+  if (!cart) {
+    res.status(404).json("not found");
   }
-
-  res.status(200).json({
-    status: "success",
-    doc,
-  });
+  res.status(200).json(cart);
 };
 
 exports.updateQuantity = async (req, res, next) => {
-  const doc = await Cart.findById(req.params.cartId);
-  // const id = doc.id;
-  // console.log(id);
-  // const product = await doc.product.filter(
-  //   (el) => el.quantity === req.body.quantity
-  // );
-  // const cartProducts = await doc.product.find(
-  //   (e) => (e.id = req.params.productId)
-  // );
-  // cartProducts.quantity = req.body.quantity;
-
-  // product.quantity = req.body.quantity;
-  const cartProducts = await doc.product.map((e) =>
-    e.id === req.params.productId ? { ...e, quantity: req.body.quantity } : e
-  );
-  console.log(cartProducts);
-
-  await doc.save();
-
-  res.status(200).json({
-    status: "success",
-    cart: cartProducts,
+  const doc = await Cart.find({ user: req.user.id }).then(async (r) => {
+    const pr = r.find((p) => (p.product = req.params.productId));
+    const cartPr = pr.product.find((e) => e.productID === req.params.productId);
+    // await pr.save({ suppressWarning: true });
+    cartPr.quantity = req.body.quantity;
+    res.status(200).json(r);
   });
+
+  console.log(req.params.productId);
 };
