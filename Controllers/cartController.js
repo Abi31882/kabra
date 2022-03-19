@@ -1,4 +1,4 @@
-const Cart = require("../Models/cartModel");
+const Cart = require("../Models/cartModel.js");
 
 exports.setCustomerId = (req, res, next) => {
   if (!req.body.user) req.body.user = req.user.id;
