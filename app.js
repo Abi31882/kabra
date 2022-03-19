@@ -10,7 +10,7 @@ app.use(fileupload());
 
 app.use(express.json());
 const corsOptions = {
-  origin: "https://ecstatic-euler-b704c3.netlify.app",
+  origin: "https://ecstatic-euler-b704c3.netlify.app/",
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
