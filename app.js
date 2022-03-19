@@ -10,6 +10,7 @@ app.use(fileupload());
 
 app.use(cors());
 
+app.options("*", cors());
 // development logging
 if (process.env.NODE_ENV === "development") {
   console.log("development");
