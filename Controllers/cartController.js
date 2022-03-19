@@ -24,27 +24,26 @@ exports.addToCart = async (req, res, next) => {
   if (!doc) {
     return res.status(400).json("no cart created");
   }
-  const product = doc.product.find((p) => p.id === productId);
+  const product = doc.product.find((p) => p.productID == productId);
 
   if (product) {
     return res
       .status(400)
       .json(
-        "this product is already in your cart, Increase the quantity from the carts page",
-        400
+        "this product is already in your cart, Increase the quantity from the carts page"
       );
+  } else {
+    doc.product.push({
+      name,
+      price,
+      quantity,
+      image,
+      productID,
+    });
+    await doc.save();
   }
 
-  doc.product.push({
-    name,
-    price,
-    quantity,
-    image,
-    productID,
-  });
-
   // doc.product.push(productId);
-  await doc.save();
   res.status(200).json({
     status: "success",
     doc,
@@ -81,13 +80,21 @@ exports.getCart = async (req, res, next) => {
 };
 
 exports.updateQuantity = async (req, res, next) => {
-  const doc = await Cart.find({ user: req.user.id }).then(async (r) => {
-    const pr = r.find((p) => (p.product = req.params.productId));
-    const cartPr = pr.product.find((e) => e.productID === req.params.productId);
-    // await pr.save({ suppressWarning: true });
-    cartPr.quantity = req.body.quantity;
-    res.status(200).json(r);
-  });
+  if (req.body.quantity < 0) {
+    return res.status(400).json("quantity cannot be smaller than 0");
+  }
 
-  console.log(req.params.productId);
+  const doc = await Cart.updateOne(
+    {
+      user: req.user.id,
+      product: { $elemMatch: { productID: req.params.productId } },
+    },
+    {
+      $set: {
+        "product.$.quantity": req.body.quantity,
+      },
+    }
+  ).then((r) => {
+    return res.status(200).json(r);
+  });
 };
