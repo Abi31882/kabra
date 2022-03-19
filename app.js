@@ -9,8 +9,13 @@ var fileupload = require("express-fileupload");
 app.use(fileupload());
 
 app.use(express.json());
-app.use(cors());
-app.options("*", cors());
+const corsOptions = {
+  origin: "https://ecstatic-euler-b704c3.netlify.app",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+// app.use(cors());
+// app.options("*", cors());
 
 // development logging
 if (process.env.NODE_ENV === "development") {
