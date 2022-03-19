@@ -8,12 +8,7 @@ var fileupload = require("express-fileupload");
 
 app.use(fileupload());
 
-app.use(express.json());
-const corsOptions = {
-  origin: "https://ecstatic-euler-b704c3.netlify.app",
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+app.use(cors());
 // app.use(cors());
 // app.options("*", cors());
 
