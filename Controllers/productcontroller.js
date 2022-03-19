@@ -37,8 +37,7 @@ exports.addProduct = async (req, res, next) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const doc = await Product.find();
-    res.set("Access-Control-Allow-Origin", "*");
-    res.set("Access-Control-Allow-Origin", "*").status(200).json(doc);
+    res.status(200).json(doc);
   } catch (e) {
     res.json(e);
   }
