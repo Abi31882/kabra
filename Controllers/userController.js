@@ -37,9 +37,7 @@ exports.singup = async function (req, res) {
 };
 
 exports.login = async function (req, res, next) {
-  const { password } = req.body;
-
-  if (!userName || !password) {
+  if (!req.body.userName || !req.body.password) {
     return res.status(500).json({
       message: "You must provide username and password",
     });
@@ -48,7 +46,10 @@ exports.login = async function (req, res, next) {
   const user = await User.findOne({ userName: req.body.userName }).select(
     "+password"
   );
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (
+    !user ||
+    !(await user.correctPassword(req.body.password, user.password))
+  ) {
     return res.status(400).json({
       message: "Incorrect username or password",
     });
