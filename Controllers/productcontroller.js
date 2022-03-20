@@ -3,7 +3,10 @@ const { cloudinary } = require("../utils/cloudinary");
 const Product = require("../Models/productModel");
 
 exports.addProduct = async (req, res, next) => {
-  if (!req.files.image) return next();
+  const { name, description, price, quantity } = req.body;
+  const { image } = req.files;
+  if (!name || !description || !price || !quantity || !image)
+    return res.status(400).json("you must provide all required fields");
 
   req.body.image = `product--${Date.now()}-image.jpeg`;
   try {
