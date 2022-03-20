@@ -1,5 +1,5 @@
 const express = require("express");
-const ProductController = require("../Controllers/productcontroller");
+const ProductController = require("../Controllers/productcontroller.js");
 const cartRouter = require("./cartRoutes");
 
 const router = express.Router({ mergeParams: true });
