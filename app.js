@@ -10,6 +10,8 @@ app.use(fileupload());
 
 app.use(cors());
 
+app.use(express.json());
+
 app.options("*", cors());
 // development logging
 if (process.env.NODE_ENV === "development") {
