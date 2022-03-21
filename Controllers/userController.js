@@ -20,14 +20,20 @@ const createSendToken = (doc, statusCode, req, res) => {
 };
 
 exports.singup = async function (req, res) {
+  const { userName, password } = req.body;
   try {
     const user = await User.findOne({ userName: req.body.userName });
     if (user) {
       return res.status(400).json({ message: "username already exists" });
     }
+    if (!userName || !password) {
+      return res
+        .status(400)
+        .json({ message: "You must fill in all the fields" });
+    }
     const newUser = await User.create({
-      userName: req.body.userName,
-      password: req.body.password,
+      userName,
+      password,
     });
 
     createSendToken(newUser, 200, req, res);

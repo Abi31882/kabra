@@ -5,12 +5,7 @@ const Product = require("../Models/productModel");
 exports.addProduct = async (req, res, next) => {
   const { name, description, price, quantity } = req.body;
   // const image = req.files.image;
-  if (
-    name == undefined ||
-    description == undefined ||
-    price == undefined ||
-    req.files == null
-  ) {
+  if (!name || !description || !price || !req.files) {
     return res.status(400).json("you must fill-in all required fields");
   }
 
