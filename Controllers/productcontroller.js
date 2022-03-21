@@ -7,7 +7,11 @@ exports.addProduct = async (req, res, next) => {
   if (!req.files) {
     return res.status(400).json("you must choose an image");
   }
-  if ((name || description || price) == "undefined") {
+  if (
+    name == "undefined" ||
+    description == "undefined" ||
+    price == "undefined"
+  ) {
     return res.status(400).json("you must fill-in all required fields");
   }
 
