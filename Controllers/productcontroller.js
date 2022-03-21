@@ -3,15 +3,16 @@ const { cloudinary } = require("../utils/cloudinary");
 const Product = require("../Models/productModel");
 
 exports.addProduct = async (req, res, next) => {
-  const { name, description, price, quantity } = req.body;
-  // const image = req.files.image;
-  if (!name || !description || !price || !req.files) {
+  const { name, description, price } = req.body;
+  if (!req.files) {
+    return res.status(400).json("you must choose an image");
+  }
+  if ((name || description || price) == "undefined") {
     return res.status(400).json("you must fill-in all required fields");
   }
 
   req.body.image = `product--${Date.now()}-image.jpeg`;
   try {
-    // console.log(req.files);
     await sharp(req.files.image.data)
       .resize(500, 500)
       .toFormat("jpeg")
