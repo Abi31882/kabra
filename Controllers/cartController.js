@@ -80,8 +80,8 @@ exports.getCart = async (req, res, next) => {
 };
 
 exports.updateQuantity = async (req, res, next) => {
-  if (req.body.quantity < 0) {
-    return res.status(400).json("quantity cannot be smaller than 0");
+  if (req.body.quantity < 1) {
+    return res.status(400).json("quantity cannot be smaller than 1");
   }
 
   const doc = await Cart.updateOne(
